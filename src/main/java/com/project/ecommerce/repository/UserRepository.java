@@ -8,5 +8,6 @@ import com.project.ecommerce.domain.User;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long>{
 
-    // boolean isEmailExists(String email);
+    boolean existsByEmail(String email);
+    User findByEmail(String email);
 }

@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.project.ecommerce.domain.User;
+import com.project.ecommerce.domain.response.ResCreateUser;
+import com.project.ecommerce.domain.response.ResFetchUser;
+import com.project.ecommerce.domain.response.ResUpdateUser;
 import com.project.ecommerce.repository.UserRepository;
 
 @Service
@@ -50,5 +53,38 @@ public class UserService {
 
     public void handleDelete(Long id){
         this.userRepository.deleteById(id);
+    }
+    public ResCreateUser convertToResCreateUser(User user){
+        ResCreateUser res=new ResCreateUser();
+        res.setId(user.getId());
+        res.setName(user.getName());
+        res.setAddress(user.getAddress());
+        res.setEmail(user.getEmail());
+        res.setGender(user.getGender());
+        res.setAge(user.getAge());
+        return res;
+    }
+    public ResUpdateUser convertToResUpdateUser(User user){
+        ResUpdateUser res= new ResUpdateUser();
+        res.setId(user.getId());
+        res.setName(user.getName());
+        res.setAddress(user.getAddress());
+        res.setEmail(user.getEmail());
+        res.setGender(user.getGender());
+        res.setAge(user.getAge());
+        return res;
+    }
+    public ResFetchUser convertToResFetchUser(User user){
+        ResFetchUser res=new ResFetchUser();
+        res.setId(user.getId());
+        res.setName(user.getName());
+        res.setAddress(user.getAddress());
+        res.setEmail(user.getEmail());
+        res.setGender(user.getGender());
+        res.setAge(user.getAge());
+        return res;
+    }
+    public boolean exitsByEmail(String email){
+        return this.userRepository.existsByEmail(email);
     }
 }
