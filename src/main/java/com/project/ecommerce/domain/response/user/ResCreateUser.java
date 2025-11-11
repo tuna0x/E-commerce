@@ -1,4 +1,4 @@
-package com.project.ecommerce.domain.response;
+package com.project.ecommerce.domain.response.user;
 
 import java.time.Instant;
 
@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ResUpdateUser {
+public class ResCreateUser {
     private Long id;
     private String name;
     private String email;
@@ -23,4 +23,5 @@ public class ResUpdateUser {
     private Instant updatedAt;
     private String createdBy;
     private String updateBy;
+
 }

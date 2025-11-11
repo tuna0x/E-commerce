@@ -3,18 +3,24 @@ package com.project.ecommerce.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.ecommerce.domain.User;
-import com.project.ecommerce.domain.response.ResCreateUser;
-import com.project.ecommerce.domain.response.ResFetchUser;
-import com.project.ecommerce.domain.response.ResUpdateUser;
+import com.project.ecommerce.domain.response.ResultPaginationDTO;
+import com.project.ecommerce.domain.response.user.ResCreateUser;
+import com.project.ecommerce.domain.response.user.ResFetchUser;
+import com.project.ecommerce.domain.response.user.ResUpdateUser;
 import com.project.ecommerce.service.UserService;
 import com.project.ecommerce.ultil.error.IdInvalidException;
+import com.turkraft.springfilter.boot.Filter;
 
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,12 +31,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("/api/v1")
+@AllArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @PostMapping("/users")
     public ResponseEntity<ResCreateUser> createUser(@Valid @RequestBody User user) throws IdInvalidException {
@@ -38,6 +43,8 @@ public class UserController {
         if (check==true) {
             throw new IdInvalidException("email is exists");
         }
+        String hashPassword = this.passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashPassword);
         User cur=this.userService.handleCreate(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(this.userService.convertToResCreateUser(cur));
     }
@@ -69,9 +76,8 @@ public class UserController {
 
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUser() {
-        List<User> list =this.userService.handleGetAll();
-        return ResponseEntity.ok().body(list);
+    public ResponseEntity<ResultPaginationDTO> getAllUser(@Filter Specification<User> spec,Pageable page) {
+        return ResponseEntity.ok().body(this.userService.handleGetAll(spec, page));
     }
 
 

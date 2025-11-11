@@ -2,6 +2,8 @@ package com.project.ecommerce.domain;
 
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.ecommerce.ultil.SecurityUtil;
 import com.project.ecommerce.ultil.constant.GenderEnum;
 
 import jakarta.persistence.Column;
@@ -9,6 +11,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -41,5 +46,25 @@ public class User {
     private Instant createdAt;
     private Instant updatedAt;
     private String createdBy;
-    private String updateBy;
+    private String updatedBy;
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Cart cart;
+
+        @PrePersist
+    public void handleBeforeCreate(){
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ==true ?
+        SecurityUtil.getCurrentUserLogin().get() : "";
+        this.createdAt = Instant.now();
+
+    }
+
+        @PreUpdate
+    public void handleBeforeUpdate(){
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ==true ?
+        SecurityUtil.getCurrentUserLogin().get() : "";
+        this.updatedAt = Instant.now();
+
+    }
 }

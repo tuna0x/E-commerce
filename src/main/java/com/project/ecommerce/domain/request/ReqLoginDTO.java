@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReqLogin {
+public class ReqLoginDTO {
     @NotBlank(message = "username is not blank")
     private String  username;
     @NotBlank(message = "password is not blank")

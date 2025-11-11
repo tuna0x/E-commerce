@@ -1,4 +1,4 @@
-package com.project.ecommerce.domain.response;
+package com.project.ecommerce.domain.response.user;
 
 import java.time.Instant;
 

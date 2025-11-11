@@ -8,7 +8,11 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import com.nimbusds.jose.util.Resource;
 import com.project.ecommerce.domain.response.RestResponse;
+import com.project.ecommerce.ultil.annotation.APIMessage;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 @ControllerAdvice
@@ -34,7 +38,7 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object>{
         //         return body;
         //     }
         //storage
-        if (body instanceof String ) {
+        if (body instanceof String || body instanceof Resource) {
             return body;
 
         }
@@ -44,7 +48,8 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object>{
         }else{
             // case success
             res.setData(body);
-            res.setMessage("Api success");
+            APIMessage message = returnType.getMethodAnnotation(APIMessage.class);
+            res.setMessage(message != null ? message : "CALL API SUCCESS");
         }
                 return res;
     }
