@@ -1,6 +1,7 @@
 package com.project.ecommerce.domain;
 
 import java.time.Instant;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.ecommerce.ultil.SecurityUtil;
@@ -8,9 +9,11 @@ import com.project.ecommerce.ultil.constant.GenderEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -51,6 +54,10 @@ public class User {
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     private Cart cart;
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Order> orders;
 
         @PrePersist
     public void handleBeforeCreate(){
