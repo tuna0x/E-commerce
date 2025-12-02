@@ -8,6 +8,7 @@ import com.project.ecommerce.domain.response.user.ResCreateUser;
 import com.project.ecommerce.domain.response.user.ResFetchUser;
 import com.project.ecommerce.domain.response.user.ResUpdateUser;
 import com.project.ecommerce.service.UserService;
+import com.project.ecommerce.ultil.annotation.APIMessage;
 import com.project.ecommerce.ultil.error.IdInvalidException;
 import com.turkraft.springfilter.boot.Filter;
 
@@ -38,6 +39,7 @@ public class UserController {
 
 
     @PostMapping("/users")
+    @APIMessage("Create user successfully")
     public ResponseEntity<ResCreateUser> createUser(@Valid @RequestBody User user) throws IdInvalidException {
         boolean check=this.userService.exitsByEmail(user.getEmail());
         if (check==true) {
@@ -50,6 +52,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
+    @APIMessage("Update user successfully")
     public ResponseEntity<ResUpdateUser> updateUser(@RequestBody User user) throws IdInvalidException {
         if (this.userService.getUserById(user.getId())==null) {
             throw new IdInvalidException("user is valid");
@@ -59,6 +62,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{id}")
+    @APIMessage("Delete user successfully")
     public ResponseEntity<Void> deleteUser(@PathVariable ("id") Long id) throws IdInvalidException{
         User user=this.userService.getUserById(id);
         if (user == null) {
@@ -69,6 +73,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
+    @APIMessage("Get user by id successfully")
     public ResponseEntity<ResFetchUser> getUserById(@PathVariable ("id") Long id) {
         User cur=this.userService.getUserById(id);
         return ResponseEntity.ok().body(this.userService.convertToResFetchUser(cur));
@@ -76,6 +81,7 @@ public class UserController {
 
 
     @GetMapping("/users")
+    @APIMessage("Get all users successfully")
     public ResponseEntity<ResultPaginationDTO> getAllUser(@Filter Specification<User> spec,Pageable page) {
         return ResponseEntity.ok().body(this.userService.handleGetAll(spec, page));
     }

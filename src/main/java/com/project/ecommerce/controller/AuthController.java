@@ -23,6 +23,7 @@ import com.project.ecommerce.domain.response.RestLoginDTO;
 import com.project.ecommerce.domain.response.user.ResCreateUser;
 import com.project.ecommerce.service.UserService;
 import com.project.ecommerce.ultil.SecurityUtil;
+import com.project.ecommerce.ultil.annotation.APIMessage;
 import com.project.ecommerce.ultil.error.IdInvalidException;
 
 import jakarta.validation.Valid;
@@ -49,6 +50,7 @@ public class AuthController {
 
 
     @PostMapping("/auth/login")
+    @APIMessage("User logged in successfully")
     public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody ReqLoginDTO loginDTO){
         // Nạp input gồm username/password vào Security
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
@@ -93,6 +95,7 @@ public class AuthController {
 
 
     @GetMapping("/auth/account")
+    @APIMessage("Get current user account successfully")
     public ResponseEntity<RestLoginDTO.UserGetAccount> getAccount() {
         String email=SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
             User curUser=this.userService.findByUsername(email);
@@ -110,6 +113,7 @@ public class AuthController {
 
 
         @GetMapping("/auth/refresh")
+        @APIMessage("Refresh token successfully")
     public ResponseEntity<RestLoginDTO> getRefreshToken(@CookieValue(name="refresh_token",defaultValue = "") String refresh_token) throws IdInvalidException{
         if (refresh_token.equals("")) {
             throw new IdInvalidException("Session has expired, please login again...");
@@ -160,6 +164,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/logout")
+    @APIMessage("User logged out successfully")
     public ResponseEntity<Void> logout() throws IdInvalidException{
         String email= SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() :null;
         if (email.equals("")) {
@@ -180,6 +185,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/register")
+    @APIMessage("User registered successfully")
     public ResponseEntity<ResCreateUser> register(@Valid @RequestBody User user) throws IdInvalidException{
         boolean isEmailExits=this.userService.exitsByEmail(user.getEmail());
         if (isEmailExits) {

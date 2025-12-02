@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.ecommerce.domain.Product;
 import com.project.ecommerce.domain.response.ResultPaginationDTO;
 import com.project.ecommerce.service.ProductService;
+import com.project.ecommerce.ultil.annotation.APIMessage;
 import com.project.ecommerce.ultil.error.IdInvalidException;
 import com.turkraft.springfilter.boot.Filter;
 
@@ -31,6 +32,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("/products")
+    @APIMessage("Create product successfully")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) throws IdInvalidException {
         boolean check=this.productService.findByName(product.getName());
         if (check==true) {
@@ -40,6 +42,7 @@ public class ProductController {
     }
 
     @PutMapping("/products")
+    @APIMessage("Update product successfully")
     public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws IdInvalidException{
         Product cur= this.productService.handleGetById(product.getId());
         if (cur == null) {
@@ -49,6 +52,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/products/{id}")
+    @APIMessage("Delete product successfully")
     public ResponseEntity<Void> deleteProduct(@PathVariable ("id") long id) throws IdInvalidException{
         Product cur= this.productService.handleGetById(id);
         if (cur == null) {
@@ -59,6 +63,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
+    @APIMessage("Get product by id successfully")
     public ResponseEntity<Product> getProductById(@PathVariable ("id") long id) throws IdInvalidException{
         Product cur= this.productService.handleGetById(id);
         if (cur == null) {
@@ -68,6 +73,7 @@ public class ProductController {
     }
 
     @GetMapping("/products")
+    @APIMessage("Get all products successfully")
     public ResponseEntity<ResultPaginationDTO> getAllProduct(@Filter Specification<Product> spec, Pageable page) {
         return ResponseEntity.ok().body(this.productService.handleGetAll(spec, page));
     }

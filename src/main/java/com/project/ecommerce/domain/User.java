@@ -9,6 +9,8 @@ import com.project.ecommerce.ultil.constant.GenderEnum;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,7 +45,10 @@ public class User {
     private String password;
     private String address;
     private int age;
+
+    @Enumerated(EnumType.STRING)
     private GenderEnum gender;
+
     @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
     private Instant createdAt;

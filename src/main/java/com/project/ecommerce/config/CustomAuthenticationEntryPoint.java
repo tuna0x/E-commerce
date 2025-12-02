@@ -39,7 +39,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
         res.setMessage("Token hết hạn hoặc không hợp lệ");
         res.setError(errorMessage);
         mapper.writeValue(response.getWriter(), res);
-
     }
 
 

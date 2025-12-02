@@ -56,6 +56,12 @@ public class Product {
     @JsonIgnore
     List<CartItem> cartItems;
 
+    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<OrderItem> orderItems;
+
+
+
             @PrePersist
     public void handleBeforeCreate(){
         this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ==true ?

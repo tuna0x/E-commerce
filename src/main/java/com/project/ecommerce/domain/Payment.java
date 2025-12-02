@@ -1,9 +1,22 @@
 package com.project.ecommerce.domain;
 
+import java.time.Instant;
+
+import org.apache.commons.lang3.RandomStringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.ecommerce.ultil.SecurityUtil;
+import com.project.ecommerce.ultil.constant.PaymentMethodEnum;
+import com.project.ecommerce.ultil.constant.StatusEnum;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,14 +30,30 @@ import lombok.Setter;
 @Entity
 @Table  (name = "payments")
 public class Payment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     @OneToOne(mappedBy = "payment")
     @JsonIgnore
     private Order order;
     private double amount;// số tiền thanh toán
-    private String method;// phương thức thanh toán
-    private String status;// trạng thái thanh toán
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum method;// phương thức thanh toán
+    @Enumerated(EnumType.STRING)
+    private StatusEnum status;// trạng thái thanh toán
     private String transactionId;// mã giao dịch
-    private String paymentDate;// ngày thanh toán
+
+    private Instant createdAt;
+    private String createdBy;
+
+    @PrePersist
+    public void handleBeforeCreate(){
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ==true ?
+        SecurityUtil.getCurrentUserLogin().get() : "";
+        this.createdAt = Instant.now();
+        this.transactionId="PAY-"+RandomStringUtils.randomAlphanumeric(10).toUpperCase();
+    }
+
+
 }

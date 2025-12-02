@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.ecommerce.domain.Category;
 import com.project.ecommerce.domain.response.ResultPaginationDTO;
 import com.project.ecommerce.service.CategoryService;
+import com.project.ecommerce.ultil.annotation.APIMessage;
 import com.project.ecommerce.ultil.error.IdInvalidException;
 import com.turkraft.springfilter.boot.Filter;
 
@@ -29,6 +30,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
      @PostMapping("/categories")
+    @APIMessage("Create category is successful")
     public ResponseEntity<Category> createCategory(@Valid @RequestBody Category Category) throws IdInvalidException {
         boolean check=this.categoryService.findByName(Category.getName());
         if (check==true) {
@@ -38,6 +40,7 @@ public class CategoryController {
     }
 
     @PutMapping("/categories")
+    @APIMessage("Update category is successful")
     public ResponseEntity<Category> updateCategory(@RequestBody Category Category) throws IdInvalidException{
         Category cur= this.categoryService.handleGetById(Category.getId());
         if (cur == null) {
@@ -47,6 +50,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/categories/{id}")
+    @APIMessage("Delete category is successful")
     public ResponseEntity<Void> deleteCategory(@PathVariable ("id") long id) throws IdInvalidException{
         Category cur= this.categoryService.handleGetById(id);
         if (cur == null) {
@@ -57,6 +61,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories/{id}")
+    @APIMessage("Get category by id is successful")
     public ResponseEntity<Category> getCategoryById(@PathVariable ("id") long id) throws IdInvalidException{
         Category cur= this.categoryService.handleGetById(id);
         if (cur == null) {
@@ -66,6 +71,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories")
+    @APIMessage("Get all categories is successful")
     public ResponseEntity<ResultPaginationDTO> getAllCategory(@Filter Specification<Category> spec, Pageable page) {
         return ResponseEntity.ok().body(this.categoryService.handleGetAll(spec, page));
     }
