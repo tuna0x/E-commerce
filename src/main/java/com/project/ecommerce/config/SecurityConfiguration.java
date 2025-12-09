@@ -51,6 +51,8 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(
                 authz ->  authz
                 .requestMatchers(whiteList).permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/payment/vn-pay-callback").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/payment/vn-pay").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/auth/refresh").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/users/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/v1/products/**").permitAll()
