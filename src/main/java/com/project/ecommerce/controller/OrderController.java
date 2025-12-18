@@ -13,6 +13,7 @@ import com.project.ecommerce.domain.response.order.ResGetOderDTO;
 import com.project.ecommerce.service.OrderService;
 import com.project.ecommerce.service.PaymentService;
 import com.project.ecommerce.ultil.annotation.APIMessage;
+import com.project.ecommerce.ultil.constant.PaymentMethodEnum;
 
 import lombok.AllArgsConstructor;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,10 +49,20 @@ public class OrderController {
 
     @PostMapping("/order/checkout")
     @APIMessage("checkout")
-    public ResponseEntity<Payment> checkout(@RequestBody ReqCheckoutDTO reqCheckoutDTO) {
+    public ResponseEntity<?> checkout(@RequestBody ReqCheckoutDTO reqCheckoutDTO) {
         Order order=this.orderService.createOder(reqCheckoutDTO.getShippingAddress(), reqCheckoutDTO.getCartItemIDs());
-        Payment payment = this.paymentService.createCODPayment(order.getId());
-        return ResponseEntity.ok().body(payment);
+        Payment payment;
+        switch (reqCheckoutDTO.getPaymentMethodEnum()) {
+            case COD:
+                payment= this.paymentService.createCODPayment(order.getId());
+                return ResponseEntity.ok().body(payment);
+            case VNPAY:
+                payment= this.paymentService.createPendingVNPayPayment(order.getId());
+                return ResponseEntity.ok().body(payment);
+            default:
+                break;
+        }
+        return ResponseEntity.badRequest().body("Invalid Payment Method");
     }
 
     @GetMapping("/order/{id}")

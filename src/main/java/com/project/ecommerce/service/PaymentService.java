@@ -40,6 +40,18 @@ public class PaymentService {
         return this.paymentRepository.save(payment);
     }
 
+    public Payment createPendingVNPayPayment(Long orderId){
+        Order order= this.orderService.getOrder(orderId);
+        Payment payment=new Payment();
+        payment.setOrder(order);
+        payment.setMethod(PaymentMethodEnum.VNPAY);
+        payment.setStatus(StatusEnum.PENDDING);
+        payment.setAmount(order.getTotalPrice());
+        payment.setTransactionId(null);
+        order.setPayment(payment);
+         return this.paymentRepository.save(payment);
+    }
+
     public Payment markAsPaid(String transactionId){
         Payment payment=this.paymentRepository.findByTransactionId(transactionId);
         if (payment != null) {
@@ -53,10 +65,20 @@ public class PaymentService {
         return this.paymentRepository.save(payment);
     }
 
-    public ResPaymentVNPAYDTO createVnPayPayment(HttpServletRequest request) {
-        long amount = Integer.parseInt(request.getParameter("amount")) * 100L;
+    public Payment findById(long id){
+        Optional <Payment> payOptional=this.paymentRepository.findById(id) ;
+        return payOptional.isPresent() ? payOptional.get() : null;
+    }
+
+    public ResPaymentVNPAYDTO createVnPayPayment(HttpServletRequest request, Long paymentId) {
+        Payment payment= this.paymentRepository.findById(paymentId).isPresent() ? this.paymentRepository.findById(paymentId).get() : null;
+        Order order=payment.getOrder();
+
+        long amount = (long) ((payment.getAmount()) * 100L);
         String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = vnpayConfig.getVNPayConfig();
+        vnpParamsMap.put("vnp_TxnRef",  String.valueOf(payment.getId()));
+        vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang:" +  order.getId());
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         if (bankCode != null && !bankCode.isEmpty()) {
             vnpParamsMap.put("vnp_BankCode", bankCode);
